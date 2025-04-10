@@ -20,7 +20,7 @@ st.title("CIFAR-10 Image Classifier")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples.")
 
 # Model choice
-model_choice = st.selectbox("Choose a model", ["resnet32", "resnet50+LDA+LR"])
+model_choice = st.selectbox("Choose a model", ["resnet32", "resnet50+LDA+LR", "orion"])
 
 # CIFAR-10 classes
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
@@ -35,7 +35,7 @@ if model_choice == "resnet32":
     model.eval()
 
 elif model_choice == "resnet50+LDA+LR":
-    with open("Checkpoints/LR.pkl", "rb") as f:
+    with open("LR.pkl", "rb") as f:
         pipeline = pickle.load(f)
 
     lda = pipeline['lda']
@@ -45,6 +45,22 @@ elif model_choice == "resnet50+LDA+LR":
     resnet50.fc = nn.Identity()
     resnet50.to(device)
     resnet50.eval()
+
+elif model_choice == "orion":
+    with open("kmeans+lda+cnn.pkl", "rb") as f:
+        pipeline = pickle.load(f)
+    lda = pipeline['lda']
+    kmeans = pipeline['kmeans']
+    label_map = pipeline['label_map']
+
+    resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+    resnet50.fc = nn.Identity()
+    resnet50.to(device)
+    resnet50.eval()
+
+
+    
+
 
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png", "jfif"])
@@ -61,7 +77,9 @@ if uploaded_file:
             transforms.Normalize((0.4914, 0.4822, 0.4465),
                                  (0.2470, 0.2435, 0.2616))
         ])
-    else:  # resnet50+LDA+LR
+    
+
+    else:  # resnet50+LDA+LR and Kmeans+LDA+CNN
         preprocess = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -77,6 +95,15 @@ if uploaded_file:
             output = model(input_tensor)
             _, predicted = torch.max(output, 1)
             pred_class = classes[predicted.item()]
+
+        elif model_choice == "orion":
+            features = resnet50(input_tensor)
+            features = features / features.norm(dim=1, keepdim=True)
+            reduced_feat = lda.transform(features.cpu().numpy())
+            cluster = kmeans.predict(reduced_feat)[0]
+            pred_class = classes[label_map[cluster]]
+
+
         else:
             features = resnet50(input_tensor)
             features = features / features.norm(dim=1, keepdim=True)
@@ -101,3 +128,5 @@ if uploaded_file:
         npimg = matching_images[i].numpy()
         npimg = np.transpose(npimg, (1, 2, 0))
         cols[i].image(npimg, caption=pred_class, use_container_width=True)
+
+
