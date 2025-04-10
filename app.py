@@ -55,7 +55,7 @@ if uploaded_file:
 
     # Load test set without transforms to keep images as PIL
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                            download=True, transform=None)
+                                            download=False, transform=None)
 
     # Find 5 test images that the model also predicts as the same class
     predicted_class_idx = classes.index(pred_class)
