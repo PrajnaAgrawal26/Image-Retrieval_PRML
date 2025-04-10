@@ -155,10 +155,6 @@ if uploaded_file:
 
     target_class_idx = classes.index(pred_class)
     matching_images = [img for img, label in test_set if label == target_class_idx][:5]
-                                            download=True, transform=transform_simple)
-
-    target_class_idx = classes.index(pred_class)
-    matching_images = [img for img, label in test_set if label == target_class_idx][:5]
 
     st.markdown(f"### 🔍 5 CIFAR-10 Test Images Predicted as: {pred_class}")
 
