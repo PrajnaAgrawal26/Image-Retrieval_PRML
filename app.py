@@ -12,11 +12,16 @@ import os
 import pickle
 from torchvision import models
 import torch.nn as nn
+import pickle
+from torchvision import models
+import torch.nn as nn
 
+# Suppress warnings
 # Suppress warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 st.title("CIFAR-10 Image Classifier")
+st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples.")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples.")
 
 # Model choice
@@ -29,6 +34,7 @@ classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if model_choice == "resnet32":
+    from Model.resnet_model import model, device as resnet_device
     from Model.resnet_model import model, device as resnet_device
     checkpoint_path = 'Checkpoints/resnet32.ckpt'
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
@@ -95,8 +101,27 @@ if uploaded_file:
                                  std=[0.229, 0.224, 0.225])
         ])
 
+    # Preprocessing
+    if model_choice == "resnet32":
+        preprocess = transforms.Compose([
+            transforms.Resize((32, 32)),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465),
+                                 (0.2470, 0.2435, 0.2616))
+        ])
+    
+
+    else:  # resnet50+LDA+LR and Kmeans+LDA+CNN
+        preprocess = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ])
+
     input_tensor = preprocess(image).unsqueeze(0).to(device)
 
+    # Prediction
     # Prediction
     with torch.no_grad():
         if model_choice == "resnet32":
@@ -123,7 +148,13 @@ if uploaded_file:
 
     # Load test set
     transform_simple = transforms.Compose([transforms.ToTensor()])
+    # Load test set
+    transform_simple = transforms.Compose([transforms.ToTensor()])
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                            download=True, transform=transform_simple)
+
+    target_class_idx = classes.index(pred_class)
+    matching_images = [img for img, label in test_set if label == target_class_idx][:5]
                                             download=True, transform=transform_simple)
 
     target_class_idx = classes.index(pred_class)
