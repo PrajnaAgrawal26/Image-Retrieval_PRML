@@ -11,6 +11,8 @@ import pickle
 from torchvision import models
 import torch.nn as nn
 import random
+import joblib
+
 # Suppress warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -18,7 +20,7 @@ st.title("CIFAR-10 Image Classifier")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples predicted by the model.")
 
 # Model choice
-model_choice = st.selectbox("Choose a model", ["Vortex", "resnet50+LDA+LR"])
+model_choice = st.selectbox("Choose a model", ["Vortex", "resnet50+LDA+LR", "orion", "resnet50+LDA+RF"])
 
 # CIFAR-10 classes
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
@@ -36,10 +38,28 @@ if model_choice == "Vortex":
 elif model_choice == "resnet50+LDA+LR":
     with open("Checkpoints/LR.pkl", "rb") as f:
         pipeline = pickle.load(f)
-
     lda = pipeline['lda']
     clf = pipeline['classifier']
+    resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+    resnet50.fc = nn.Identity()
+    resnet50.to(device)
+    resnet50.eval()
 
+elif model_choice == "orion":
+    with open("./Checkpoints/kmeans+lda+cnn.pkl", "rb") as f:
+        pipeline = pickle.load(f)
+    lda = pipeline['lda']
+    kmeans = pipeline['kmeans']
+    label_map = pipeline['label_map']
+    resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+    resnet50.fc = nn.Identity()
+    resnet50.to(device)
+    resnet50.eval()
+
+elif model_choice == "resnet50+LDA+RF":
+    pipeline = joblib.load("./Checkpoints/lda_rf_cifar10_model_final.pkl")
+    lda = pipeline['lda']
+    clf = pipeline['rf']
     resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
     resnet50.fc = nn.Identity()
     resnet50.to(device)
@@ -60,7 +80,7 @@ if uploaded_file:
             transforms.Normalize((0.4914, 0.4822, 0.4465),
                                  (0.2470, 0.2435, 0.2616))
         ])
-    else:  # resnet50+LDA+LR
+    else:
         preprocess = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -76,7 +96,15 @@ if uploaded_file:
             output = model(input_tensor)
             _, predicted = torch.max(output, 1)
             pred_class = classes[predicted.item()]
-        else:
+
+        elif model_choice == "orion":
+            features = resnet50(input_tensor)
+            features = features / features.norm(dim=1, keepdim=True)
+            reduced_feat = lda.transform(features.cpu().numpy())
+            cluster = kmeans.predict(reduced_feat)[0]
+            pred_class = classes[label_map[cluster]]
+
+        else:  # LR and RF
             features = resnet50(input_tensor)
             features = features / features.norm(dim=1, keepdim=True)
             reduced_feat = lda.transform(features.cpu().numpy())
@@ -85,7 +113,7 @@ if uploaded_file:
 
     st.success(f"✅ Predicted Class: **{pred_class.upper()}**")
 
-    # Load test set (transformed for model)
+    # Load test set
     if model_choice == "Vortex":
         test_transform = transforms.Compose([
             transforms.Resize((32, 32)),
@@ -102,7 +130,6 @@ if uploaded_file:
         ])
 
     raw_transform = transforms.ToTensor()
-
     test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=test_transform)
     raw_test_set = torchvision.datasets.CIFAR10(root='./data', train=False, download=False, transform=raw_transform)
 
@@ -110,6 +137,7 @@ if uploaded_file:
     matching_images = []
     indices = list(range(len(test_set)))
     random.shuffle(indices)
+
     with torch.no_grad():
         for i in indices:
             input_img, _ = test_set[i]
@@ -120,14 +148,21 @@ if uploaded_file:
                 _, pred = torch.max(output, 1)
                 pred_class_idx = pred.item()
 
-            elif model_choice == "resnet50+LDA+LR":
+            elif model_choice == "orion":
+                feat = resnet50(input_tensor)
+                feat = feat / feat.norm(dim=1, keepdim=True)
+                reduced_feat = lda.transform(feat.cpu().numpy())
+                cluster = kmeans.predict(reduced_feat)[0]
+                pred_class_idx = label_map[cluster]
+
+            else:  # LR and RF
                 feat = resnet50(input_tensor)
                 feat = feat / feat.norm(dim=1, keepdim=True)
                 reduced_feat = lda.transform(feat.cpu().numpy())
                 pred_class_idx = clf.predict(reduced_feat)[0]
 
             if classes[pred_class_idx] == pred_class:
-                matching_images.append(raw_test_set[i][0])  # unnormalized for display
+                matching_images.append(raw_test_set[i][0])
             if len(matching_images) >= 5:
                 break
 
