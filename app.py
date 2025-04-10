@@ -111,7 +111,7 @@ if uploaded_file:
             pred_ind = clf.predict(reduced_feat)[0]
             pred_class = classes[pred_ind]
 
-    st.success(f"✅ Predicted Class: **{pred_class.upper()}**")
+    st.success(f"Predicted Class: **{pred_class.upper()}**")
 
     # Load test set
     if model_choice == "Vortex":
@@ -166,7 +166,7 @@ if uploaded_file:
             if len(matching_images) >= 5:
                 break
 
-    st.markdown(f"### 🔍 5 CIFAR-10 Test Images the Model Predicted as: `{pred_class}`")
+    st.markdown(f"###5 CIFAR-10 Test Images the Model Predicted as: `{pred_class}`")
     cols = st.columns(5)
     for i in range(5):
         npimg = matching_images[i].numpy()
