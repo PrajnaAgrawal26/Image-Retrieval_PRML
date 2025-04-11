@@ -20,7 +20,7 @@ st.title("CIFAR-10 Image Classifier")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples predicted by the model.")
 
 # Model choice
-model_choice = st.selectbox("Choose a model", ["Vortex", "resnet50+LDA+LR", "orion", "resnet50+LDA+RF"])
+model_choice = st.selectbox("Choose a model", ["Vortex", "resnet50+LDA+LR", "orion", "Nuvora"])
 
 # CIFAR-10 classes
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
@@ -56,8 +56,8 @@ elif model_choice == "orion":
     resnet50.to(device)
     resnet50.eval()
 
-elif model_choice == "resnet50+LDA+RF":
-    pipeline = joblib.load("./Checkpoints/lda_rf_cifar10_model_final.pkl")
+elif model_choice == "Nuvora":
+    pipeline = joblib.load("./Checkpoints/RF.pkl")
     lda = pipeline['lda']
     clf = pipeline['rf']
     resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
