@@ -9,9 +9,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
-import joblib  # or use pickle
+import joblib 
 
-# Load features and labels
+# Step 1: Load features and labels
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
@@ -25,17 +25,14 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=False
 # Define device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Step 2: Extract features from ResNet50
 resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
 resnet50.fc = nn.Identity()  # Remove final classification layer
 resnet50 = resnet50.to(device)
 resnet50.eval()
 
-# Step 3: Extract features from ResNet50
 cnn_features = []
 labels = []
-
-# Define device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 with torch.no_grad():
     for images, targets in tqdm(trainloader, desc="Extracting CNN Features"):
@@ -53,7 +50,7 @@ print("Extracted feature shape:", X_train.shape)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
 
-# Step 9: Extract features for test set using ResNet50
+# Step 3: Extract features for test set using ResNet50
 cnn_features_test = []
 labels_test = []
 
