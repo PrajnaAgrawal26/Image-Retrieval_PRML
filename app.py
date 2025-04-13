@@ -20,7 +20,7 @@ st.title("CIFAR-10 Image Classifier")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples predicted by the model.")
 
 # Model choice
-model_choice = st.selectbox("Choose a model", ["Vortex", "resnet50+LDA+LR", "orion", "Nuvora"])
+model_choice = st.selectbox("Choose a model", ["Vortex", "Aether", "Orion", "Nuvora"])
 
 # CIFAR-10 classes
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
@@ -35,7 +35,7 @@ if model_choice == "Vortex":
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
     model.eval()
 
-elif model_choice == "resnet50+LDA+LR":
+elif model_choice == "Aether":
     with open("Checkpoints/LR.pkl", "rb") as f:
         pipeline = pickle.load(f)
     lda = pipeline['lda']
@@ -45,7 +45,7 @@ elif model_choice == "resnet50+LDA+LR":
     resnet50.to(device)
     resnet50.eval()
 
-elif model_choice == "orion":
+elif model_choice == "Orion":
     with open("./Checkpoints/kmeans+lda+cnn.pkl", "rb") as f:
         pipeline = pickle.load(f)
     lda = pipeline['lda']
@@ -70,7 +70,7 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png", 
 
 if uploaded_file:
     image = Image.open(uploaded_file).convert('RGB')
-    st.image(image, caption="🖼 Uploaded Image", width=200)
+    st.image(image, caption="Uploaded Image", width=200)
 
     # Preprocessing
     if model_choice == "Vortex":
@@ -97,7 +97,7 @@ if uploaded_file:
             _, predicted = torch.max(output, 1)
             pred_class = classes[predicted.item()]
 
-        elif model_choice == "orion":
+        elif model_choice == "Orion":
             features = resnet50(input_tensor)
             features = features / features.norm(dim=1, keepdim=True)
             reduced_feat = lda.transform(features.cpu().numpy())
@@ -148,7 +148,7 @@ if uploaded_file:
                 _, pred = torch.max(output, 1)
                 pred_class_idx = pred.item()
 
-            elif model_choice == "orion":
+            elif model_choice == "Orion":
                 feat = resnet50(input_tensor)
                 feat = feat / feat.norm(dim=1, keepdim=True)
                 reduced_feat = lda.transform(feat.cpu().numpy())
