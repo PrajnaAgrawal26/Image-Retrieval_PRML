@@ -1,3 +1,11 @@
+'''
+Nuvora is a image classification model that combines deep learning and classical machine learning.
+It uses a pretrained ResNet50 backbone to extract rich, high-dimensional feature embeddings from CIFAR-10 images.
+These embeddings are then reduced in dimensionality using Linear Discriminant Analysis (LDA) and classified 
+using a Random Forest.
+'''
+
+
 import numpy as np
 import tqdm
 import torch
@@ -11,7 +19,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
 import joblib 
 
-# Step 1: Load features and labels
+# Define standard preprocessing: resize, convert to tensor, and normalize
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
@@ -19,20 +27,24 @@ transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225])
 ])
 
+# Load CIFAR-10 training set with transformations
+
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=False, num_workers=2)
 
 # Define device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Step 2: Extract features from ResNet50
+# Extract features from pretrained ResNet50
 resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
 resnet50.fc = nn.Identity()  # Remove final classification layer
 resnet50 = resnet50.to(device)
-resnet50.eval()
+resnet50.eval() # Set model to evaluation mode
 
 cnn_features = []
 labels = []
+
+# Loop through training data and extract features
 
 with torch.no_grad():
     for images, targets in tqdm(trainloader, desc="Extracting CNN Features"):
@@ -42,6 +54,8 @@ with torch.no_grad():
         cnn_features.append(feats.cpu().numpy())
         labels.append(targets.numpy())
 
+# Combine all batches into single arrays
+
 X_train = np.concatenate(cnn_features, axis=0)
 y_train = np.concatenate(labels, axis=0)
 print("Extracted feature shape:", X_train.shape)
@@ -50,7 +64,7 @@ print("Extracted feature shape:", X_train.shape)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
 
-# Step 3: Extract features for test set using ResNet50
+# Extract features for test set using ResNet50
 cnn_features_test = []
 labels_test = []
 
@@ -65,7 +79,12 @@ with torch.no_grad():
 X_test = np.concatenate(cnn_features_test, axis=0)
 y_test = np.concatenate(labels_test, axis=0)
 
-# Build pipeline with LDA and RandomForestClassifier
+# Build and train the Nuvora classification model using LDA and RandomForestClassifier
+
+# Defining the pipeline:
+# - Apply Linear Discriminant Analysis to reduce dimensionality
+# - Then train a Random Forest classifier on the transformed features
+
 model = Pipeline([
     ("lda", LinearDiscriminantAnalysis(n_components=9)),
     ("rf", RandomForestClassifier(
@@ -78,14 +97,17 @@ model = Pipeline([
     ))
 ])
 
-# Fit the model
+# Train the Nuvora model
+
 model.fit(X_train, y_train)
 
-# Predictions
+# Predict on training and test sets
+
 y_train_pred = model.predict(X_train)
 y_test_pred = model.predict(X_test)
 
-# Accuracy
+# Evaluate performance
+
 train_accuracy = accuracy_score(y_train, y_train_pred)
 test_accuracy = accuracy_score(y_test, y_test_pred)
 
