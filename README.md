@@ -16,10 +16,8 @@ This project implements an image retrieval system using machine learning techniq
 ---
 
 ## Demo Videos:
-<!-- - [Demo Video 1: Overview of the Project](#)
-- [Demo Video 2: How to Use the Web Application](#)
-- [Demo Video 3: Model Training and Evaluation](#) -->
-
+- [Demo 1](assets/Demo1.mp4)
+- [Demo 2](assets/Demo2.mp4)
 ---
 
 ## Repo Structure:
