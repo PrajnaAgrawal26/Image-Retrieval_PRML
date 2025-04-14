@@ -16,8 +16,13 @@ This project implements an image retrieval system using machine learning techniq
 ---
 
 ## Demo Videos:
-- [Demo 1](assets/Demo1.mp4)
-- [Demo 2](assets/Demo2.mp4)
+- Demo1
+  
+ ![Demo 1](assets/Demo1.gif)
+
+- Demo2
+  
+  ![Demo 2](assets/Demo2.gif)
 ---
 
 ## Repo Structure:
@@ -27,6 +32,9 @@ Directory structure:
     ├── README.md
     ├── app.py
     ├── requirements.txt
+    ├── index.html
+    ├── PRML_CourseProject_FinalReport.pdf
+    ├── PRML_CourseProject_MidReport.pdf
     ├── Checkpoints/
     │   ├── LR.pkl
     │   ├── RF.pkl
