@@ -16,7 +16,7 @@ import joblib
 # Suppress warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-st.title("CIFAR-10 Image Classifier")
+st.title("CIFAR-10 Image Retrieval")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples predicted by the model.")
 
 # Model choice
