@@ -16,8 +16,8 @@ This project implements an image retrieval system using machine learning techniq
 ---
 
 ## Demo Videos:
-- [Demo 1](assets/Demo1.gif)
-- [Demo 2](assets/Demo2.mp4)
+- ![Demo 1](assets/Demo1.gif)
+- ![Demo 2](assets/Demo2.gif)
 ---
 
 ## Repo Structure:
