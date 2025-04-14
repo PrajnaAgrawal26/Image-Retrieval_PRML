@@ -1,5 +1,5 @@
 import streamlit as st
-st.set_page_config(page_title="CIFAR-10 Classifier", layout="centered")
+st.set_page_config(page_title="CIFAR-10 Image Retrieval", layout="centered")
 
 import torch
 import torchvision
@@ -166,7 +166,7 @@ if uploaded_file:
             if len(matching_images) >= 5:
                 break
 
-    st.markdown(f"###5 CIFAR-10 Test Images the Model Predicted as: `{pred_class}`")
+    st.markdown(f"5 CIFAR-10 Test Images the Model Predicted as: `{pred_class}`")
     cols = st.columns(5)
     for i in range(5):
         npimg = matching_images[i].numpy()
