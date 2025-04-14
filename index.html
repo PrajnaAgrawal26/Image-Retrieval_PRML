@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Retrieval</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      max-width: 1000px;
+      margin: auto;
+      padding: 40px 20px;
+      background: #fff;
+      color: #000;
+    }
+
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 0.3em;
+      text-align: center;
+    }
+
+    .conference {
+      color: #007bff;
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+
+    .authors {
+      font-size: 1em;
+      text-align: center;
+      margin-bottom: 0.3em;
+    }
+
+    .affiliation {
+      font-size: 0.9em;
+      text-align: center;
+      margin-bottom: 1.5em;
+    }
+
+    .links {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .links a {
+      margin: 0 8px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #000;
+      border-bottom: 2px solid #000;
+    }
+
+    .links a:hover {
+      color: #007bff;
+      border-color: #007bff;
+    }
+
+    .abstract {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .abstract h2 {
+      text-align: center;
+      font-size: 1.4em;
+      margin-bottom: 10px;
+    }
+
+    .abstract p {
+      font-size: 1em;
+      line-height: 1.6;
+    }
+
+    .retrieval-section {
+      margin-top: 60px;
+    }
+
+    .retrieval-section h2 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 30px;
+    }
+
+    .query-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .query {
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .query img {
+      width: 180px;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .query p {
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.result-wrapper p {
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+
+    .result img {
+      height: 100%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Image Retrieval</h1>
+
+  <div class="authors">
+    Harshita Vachhani<sup>1</sup> &nbsp;
+    Nishkarsh Verma<sup>1</sup> &nbsp;
+    Prajna Agrawal<sup>1</sup> &nbsp;
+    Sonam Sikarwar<sup>1</sup> &nbsp;
+    Sreenitya Thatikunta<sup>1</sup>
+  </div>
+  <div class="affiliation">
+    <sup>1</sup> IIT Jodhpur &nbsp;&nbsp;
+  </div>
+
+  <div class="links">
+    <a href="https://github.com/PrajnaAgrawal26/Image-Retrieval_PRML/tree/main">Code</a> |
+    <a href="https://www.cs.toronto.edu/~kriz/cifar.html">Dataset</a> |
+    <a href="http://34.131.53.70:8501/">Website</a> |
+    <a href="#">Spotlight Video</a>
+  </div>
+
+  <div class="abstract">
+    <h2>Abstract</h2>
+    <p>
+      This project presents a suite of machine learning models for image classification and retrieval using both supervised and unsupervised learning approaches. 
+      The <strong>Vortex</strong> model employs a ResNet-32 architecture with residual blocks to mitigate vanishing gradients, enabling accurate classification of images into 10 categories. 
+      Additional models utilize deep feature extraction through ResNet50, followed by <strong>Linear Discriminant Analysis (LDA)</strong> for dimensionality reduction and class-discriminative enhancement. 
+      <strong>Aether</strong> leverages multinomial logistic regression with softmax-based probability estimation for multi-class classification, while <strong>Nuvora</strong> implements a Random Forest classifier to ensure robust prediction via ensemble learning. 
+      In contrast, <strong>Orion</strong> utilizes unsupervised K-Means clustering to group data based on feature similarity, mapping clusters to labels using majority voting. 
+      Together, these models form a comprehensive system for extracting, learning, and predicting complex visual patterns with strong generalization performance.
+    </p>
+  </div>
+
+  <div class="retrieval-section">
+    <h2>Example Query + Retrieval Results</h2>
+
+    <div class="query-result">
+      <div class="query">
+        <img src="f7cc7b3d-74f1-4445-bbe8-26cffd6d122e.jfif" alt="Query 1">
+        <p>Query 1</p>
+      </div>
+      <div class="result">
+        <div class="result-wrapper">
+          <img src="a1.png" alt="Combined Retrieval Result">
+          <p>Retrieved Images</p>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="query-result">
+      <div class="query">
+        <img src="D:\catie.jfif" alt="Query 1">
+        <p>Query 2</p>
+      </div>
+      <div class="result">
+        <div class="result-wrapper">
+          <img src="a3.png" alt="Combined Retrieval Result">
+          <p>Retrieved Images</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="short-talk" style="margin-top: 60px; text-align: center;">
+      <h2 style="text-align: center;">Demo Video</h2>
+      <div class="video-wrapper" style="max-width: 540px; height: 340px; overflow: hidden; position: relative; margin: 0 auto;">
+        <iframe 
+          src="https://drive.google.com/file/d/1U4d1mo98J1PWYrhpmeqeaMsBTOIYgVbr/preview" 
+          width="100%" 
+          height="100%" 
+          allow="autoplay"
+          style="border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+        </iframe>
+      </div>
+    </div>
+    
+    <div class="team-section" style="margin-top: 80px;">
+      <h2 style="text-align: center; font-size: 1.8em; margin-bottom: 40px;">Team</h2>
+    
+      <div style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+      ">
+    
+        <!-- Team Member Template -->
+        <div style="
+          width: 180px;
+          text-align: center;
+          border: 1px solid #ccc;
+          border-radius: 12px;
+          padding: 15px;
+          box-sizing: border-box;
+          background-color: #fff;
+        ">
+          <img src="prajna.jfif" alt="Prajna Agrawal" style="width: 100%; height: 180px; object-fit: cover; border-radius: 10px;">
+          <p style="font-weight: bold; margin: 10px 0 0;">Prajna<br>Agrawal</p>
+          <div style="margin-top: 8px;">
+            <a href="https://www.linkedin.com/in/prajna-agrawal-7177a328a/" title="LinkedIn" style="color: #0077b5; font-size: 1.2em; margin: 0 6px;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/PrajnaAgrawal26" title="GitHub" style="color: #000; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+    
+        <!-- Copy & Replace Below for Others -->
+    
+        <div style="width: 180px; text-align: center; border: 1px solid #ccc; border-radius: 12px; padding: 15px; box-sizing: border-box; background-color: #fff;">
+          <img src="harshita.jfif" alt="Harshita Vachhani" style="width: 100%; height: 180px; object-fit: cover; border-radius: 10px;">
+          <p style="font-weight: bold; margin: 10px 0 0;">Harshita<br>Vachhani</p>
+          <div style="margin-top: 8px;">
+            <a href="https://www.linkedin.com/in/harshita-vachhani-86340a2a0/" title="LinkedIn" style="color: #0077b5; font-size: 1.2em;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/Harshita772" title="GitHub" style="color: #000; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+    
+        <div style="width: 180px; text-align: center; border: 1px solid #ccc; border-radius: 12px; padding: 15px; box-sizing: border-box; background-color: #fff;">
+          <img src="sonam.jfif" alt="Sonam Sikarwar" style="width: 100%; height: 180px; object-fit: cover; border-radius: 10px;">
+          <p style="font-weight: bold; margin: 10px 0 0;">Sonam<br>Sikarwar</p>
+          <div style="margin-top: 8px;">
+            <a href="https://www.linkedin.com/in/sonam-sikarwar-7965a82b4/" title="LinkedIn" style="color: #0077b5; font-size: 1.2em; margin: 0 6px;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/isonam16" title="GitHub" style="color: #000; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+    
+        <div style="width: 180px; text-align: center; border: 1px solid #ccc; border-radius: 12px; padding: 15px; box-sizing: border-box; background-color: #fff;">
+          <img src="sreenitya.jfif" alt="Sreenitya Thatikunta" style="width: 100%; height: 180px; object-fit: cover; border-radius: 10px;">
+          <p style="font-weight: bold; margin: 10px 0 0;">Sreenitya<br>Thatikunta</p>
+          <div style="margin-top: 8px;">
+            <a href="https://www.linkedin.com/in/sreenitya-thatikunta-b16a8a287/" title="LinkedIn" style="color: #0077b5; font-size: 1.2em; margin: 0 6px;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/SreenityaThatikunta" title="GitHub" style="color: #000; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+    
+        <div style="width: 180px; text-align: center; border: 1px solid #ccc; border-radius: 12px; padding: 15px; box-sizing: border-box; background-color: #fff;">
+          <img src="nishkarsh.jfif" alt="Nishkarsh Verma" style="width: 100%; height: 180px; object-fit: cover; border-radius: 10px;">
+          <p style="font-weight: bold; margin: 10px 0 0;">Nishkarsh<br>Verma</p>
+          <div style="margin-top: 8px;">
+            <a href="https://www.linkedin.com/in/nishkarsh-verma-81a3392b2/" title="LinkedIn" style="color: #0077b5; font-size: 1.2em; margin: 0 6px;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/nishkarshb23cm1028" title="GitHub" style="color: #000; font-size: 1.2em;"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="acknowledgements" style="margin-top: 60px;">
+      <h2 style="text-align: center;">Acknowledgements</h2>
+      <p style="font-size: 1em; line-height: 1.6; max-width: 800px; margin: auto;">
+        We would like to express our sincere gratitude to Prof. Anand Mishra for his invaluable guidance and support throughout the course CSL2050: Pattern Recognition and Machine Learning.
+
+His insights, feedback, and encouragement played a crucial role in shaping this project. We also appreciate the opportunity to explore and experiment with various machine learning techniques as part of this coursework.
+      </p>
+    </div>
+    
+    
+    
+    
+
+      
+
+  </div>
+
+</body>
+</html>
