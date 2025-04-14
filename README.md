@@ -61,7 +61,7 @@ The ```Model/``` folder contains the implementation of the final models namely V
 ## How to Use:
 
 ### Option 1: Use the Deployed Application
-The application is already deployed and can be accessed at the following link:
+The  application  is  already  deployed  and  can  be  accessed  at  the  following  link:
 
 [ImageRetrieval](http://34.131.53.70:8501/)
 
