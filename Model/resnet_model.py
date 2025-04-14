@@ -53,14 +53,16 @@ class ResNet(nn.Module):
         self.conv = conv3x3(3, 16)
         self.bn = nn.BatchNorm2d(16)
         self.relu = nn.ReLU(inplace=True)
+        # Build 3 layers of residual blocks with increasing channels
         self.layer1 = self.make_layer(block, 16, layers[0])
         self.layer2 = self.make_layer(block, 32, layers[1], 2)
         self.layer3 = self.make_layer(block, 64, layers[2], 2)
-        self.avg_pool = nn.AvgPool2d(8)
-        self.fc = nn.Linear(64, num_classes)
+        self.avg_pool = nn.AvgPool2d(8) # Global average pooling
+        self.fc = nn.Linear(64, num_classes)  # Final classification layer
 
     def make_layer(self, block, out_channels, blocks, stride=1):
         downsample = None
+        # If input and output dimensions don't match, apply downsampling
         if (stride != 1) or (self.in_channels != out_channels):
             downsample = nn.Sequential(
                 conv3x3(self.in_channels, out_channels, stride=stride),
@@ -75,7 +77,7 @@ class ResNet(nn.Module):
     def forward(self, x):
         out = self.conv(x)
         out = self.bn(out)
-        out = self.relu(out)
+        out = self.relu(out)        #Apply activation functions
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
@@ -86,4 +88,4 @@ class ResNet(nn.Module):
     
     
 model = ResNet(ResidualBlock, [5, 5, 5])  # for ResNet-32
-model.to(device)
+model.to(device) # Move model to GPU if available
