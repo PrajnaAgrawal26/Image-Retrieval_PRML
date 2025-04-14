@@ -13,39 +13,44 @@ import torch.nn as nn
 import random
 import joblib
 
-# Suppress warnings
+# Suppress future warnings for clean output
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+# Streamlit UI setup
 st.title("CIFAR-10 Image Retrieval")
 st.markdown("Upload an image and see the predicted class, along with 5 similar CIFAR-10 samples predicted by the model.")
 
-# Model choice
+# Dropdown menu to choose model
 model_choice = st.selectbox("Choose a model", ["Vortex", "Aether", "Orion", "Nuvora"])
 
-# CIFAR-10 classes
+# CIFAR-10 class labels
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load models
+# Load selected model
 if model_choice == "Vortex":
+    # Custom ResNet model for CIFAR-10 (32x32)
     from Model.resnet_model import model, device as resnet_device
     checkpoint_path = 'Checkpoints/resnet32.ckpt'
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
     model.eval()
 
 elif model_choice == "Aether":
+    # Logistic Regression pipeline with LDA
     with open("Checkpoints/LR.pkl", "rb") as f:
         pipeline = pickle.load(f)
     lda = pipeline['lda']
     clf = pipeline['classifier']
+    # Use ResNet50 for feature extraction
     resnet50 = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
     resnet50.fc = nn.Identity()
     resnet50.to(device)
     resnet50.eval()
 
 elif model_choice == "Orion":
+    # Clustering-based pipeline with KMeans and LDA
     with open("./Checkpoints/kmeans+lda+cnn.pkl", "rb") as f:
         pipeline = pickle.load(f)
     lda = pipeline['lda']
@@ -57,6 +62,7 @@ elif model_choice == "Orion":
     resnet50.eval()
 
 elif model_choice == "Nuvora":
+    # Random Forest pipeline with LDA
     pipeline = joblib.load("./Checkpoints/RF.pkl")
     lda = pipeline['lda']
     clf = pipeline['rf']
@@ -68,11 +74,12 @@ elif model_choice == "Nuvora":
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png", "jfif"])
 
+
 if uploaded_file:
     image = Image.open(uploaded_file).convert('RGB')
     st.image(image, caption="Uploaded Image", width=200)
 
-    # Preprocessing
+# Define preprocessing based on model type
     if model_choice == "Vortex":
         preprocess = transforms.Compose([
             transforms.Resize((32, 32)),
@@ -90,7 +97,7 @@ if uploaded_file:
 
     input_tensor = preprocess(image).unsqueeze(0).to(device)
 
-    # Prediction
+    # Prepare test dataset for retrieval of similar images
     with torch.no_grad():
         if model_choice == "Vortex":
             output = model(input_tensor)
@@ -166,6 +173,7 @@ if uploaded_file:
             if len(matching_images) >= 5:
                 break
 
+    # Display retrieved matching images
     st.markdown(f"5 CIFAR-10 Test Images the Model Predicted as: `{pred_class}`")
     cols = st.columns(5)
     for i in range(5):
