@@ -32,6 +32,9 @@ Directory structure:
     ├── README.md
     ├── app.py
     ├── requirements.txt
+    ├── index.html
+    ├── PRML_CourseProject_FinalReport.pdf
+    ├── PRML_CourseProject_MidReport.pdf
     ├── Checkpoints/
     │   ├── LR.pkl
     │   ├── RF.pkl
